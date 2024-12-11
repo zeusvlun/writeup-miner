@@ -19,7 +19,7 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/0xSpidey/writeup-miner.git
+   git clone https://github.com/Spix0r/writeup-miner.git
    cd writeup-miner
    ```
 
