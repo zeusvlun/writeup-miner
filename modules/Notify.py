@@ -75,9 +75,10 @@ def notify(message, filtered_words, webhook=None, token=None, chatid=None):
             if message == "filtered":
                 return
             req = requests.get(f"https://api.telegram.org/bot{token}/sendmessage?chat_id={chatid}&text={message}")
+            time.sleep(5)
             if req.status_code != 200:
+                time.sleep(30)
                 logger("Telegram Error : "+req.text, "ERR")
-                exit(1)
 
     except Exception as e:
         logger("{}".format(e), "ERR")
