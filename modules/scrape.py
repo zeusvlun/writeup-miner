@@ -11,6 +11,8 @@ def parsefeeds(rss_url):
             feeds_list = []
             feeds_obj = {}
             for item in root.iter("item"):
+                creator = item.find("dc:creator", {'dc': 'http://purl.org/dc/elements/1.1/'})
+                author = creator.text if creator is not None else "Unknown"
                 title = item.find("title").text
                 guid = item.find("guid").text
                 published = item.find("pubDate").text
@@ -21,7 +23,7 @@ def parsefeeds(rss_url):
                         tag_list.append(tag.text)
                 else:
                     tag_list = []
-                feeds_obj = {"title": title, "url": guid, "published": published, "tags": tag_list}
+                feeds_obj = {"author": author, "title": title, "url": guid, "published": published, "tags": tag_list}
                 feeds_list.append(feeds_obj)
             logger("{} fetched".format(rss_url), "INF")
             return feeds_list
