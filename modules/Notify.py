@@ -8,6 +8,12 @@ def create_message(feed, filtered_words):
         isfiltered = check_filter(title,filtered_words)
         if isfiltered:
             return "filtered"
+        
+        author = re.sub(r'(?i)(?<!\\)(?:\\\\)*\\u([0-9a-f]{4})', lambda m: chr(int(m.group(1), 16)), feed["author"])
+        isfiltered = check_filter(filtered_words, author)
+        if isfiltered:
+            return "filtered"
+        
         tags = ""
         if feed["tags"] != []:
             for tag in feed["tags"]:
@@ -16,7 +22,7 @@ def create_message(feed, filtered_words):
                 tags = tags+"#"+tag+" "
         else:
             tags = "No_Tags"
-        message = '◾️ <b>Title:  </b><a href="{}"><b>{}</b></a>\n════════════════════════\n◾️ <b>Date:  </b>{}\n════════════════════════\n◾️ <b>Tags:  </b>{}'.format(feed["url"],title,feed["published"],tags)
+        message = '⤷ <b>Title: </b><a href="{}"><b>{}</b></a>\n════════════════════════\n𐀪 <b>Author: </b>{}\n════════════════════════\nⴵ <b>Time: </b>{}\n════════════════════════\n⌗ <b>Tags: </b>{}'.format(feed["url"],title,feed["author"],feed["published"],tags)
         return message
     
     except Exception as e:
@@ -28,6 +34,12 @@ def create_message_discord(feed, filtered_words):
         isfiltered = check_filter(filtered_words, title)
         if isfiltered:
             return "filtered"
+        
+        author = re.sub(r'(?i)(?<!\\)(?:\\\\)*\\u([0-9a-f]{4})', lambda m: chr(int(m.group(1), 16)), feed["author"])
+        isfiltered = check_filter(filtered_words, author)
+        if isfiltered:
+            return "filtered"
+        
         tags = ""
         if feed["tags"] != []:
             for tag in feed["tags"]:
@@ -42,10 +54,10 @@ def create_message_discord(feed, filtered_words):
         logger("{}".format(e), "ERR")
 
 
-def check_filter(filtered_words,title):
+def check_filter(filtered_words, text):
 
     for word in filtered_words:
-        if word in title:
+        if word in text:
             logger("The feed wasn't pushed because a filtered word was found in the title! {}".format(word),"INF")
             return True
         
@@ -82,8 +94,8 @@ def notify(message, filtered_words, webhook=None, token=None, chatid=None):
             "is_disabled": False,
             "link_preview_options": {
             "url": message["url"],
-            "prefer_small_media": True,
-            "prefer_large_media": False,
+            "prefer_small_media": False,
+            "prefer_large_media": True,
             "show_above_text": False
             }
         }
