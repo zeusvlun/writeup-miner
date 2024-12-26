@@ -43,11 +43,13 @@ def create_message_discord(feed, filtered_words):
         tags = ""
         if feed["tags"] != []:
             for tag in feed["tags"]:
+                if " " in tag:
+                    tag = tag.replace(" ","_")
                 if "-" in tag:
                     tag = tag.replace("-","_")
                 tags = tags+"#"+tag+" "
         else:
-            tags = "No_Tags"
+            tags = "None"
         return {"title":title , "date":feed["published"], "url":feed["url"], "tags": tags }
     
     except Exception as e:
@@ -101,7 +103,7 @@ def notify(message, filtered_words, webhook=None, token=None, chatid=None):
         }
             url = f"https://api.telegram.org/bot{token}/sendMessage"
             req = requests.post(url, json=payload)
-            time.sleep(2)
+            time.sleep(3)
 
             if req.status_code != 200:
                 time.sleep(30)
