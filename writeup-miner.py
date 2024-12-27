@@ -3,7 +3,7 @@ from modules.scrape import scrape
 from modules.Logger import Color
 from modules import filedb
 from modules import mongodb
-import os, pymongo, argparse
+import os, pymongo, argparse, hashlib
 
 HOMEPATH = os.path.expanduser('~')
 WORKINGDIR = os.path.dirname(os.path.abspath(__file__))
@@ -76,7 +76,8 @@ def main():
             logger("Updating FileDB ...", "INF")
             updateFeeds = []
             for feed in newFeeds:
-                updateFeeds.append(feed["url"].strip())
+                hashed = str(hashlib.md5(( feed["title"] + feed["published"]).encode()).hexdigest())
+                updateFeeds.append(hashed.strip())
             filedb.pushDatabase(updateFeeds, FILEDBDIR)
             logger("FileDB Updated!", "OK")
             exit(0)
@@ -88,7 +89,8 @@ def main():
             firstFeeds = []
             logger("feeds.txt not found, Updating Database for first time.", "INF")
             for feed in newFeeds:
-                firstFeeds.append(feed["url"].strip())
+                hashed = str(hashlib.md5(( feed["title"] + feed["published"]).encode()).hexdigest())
+                firstFeeds.append(hashed.strip())
             filedb.pushDatabase(firstFeeds, FILEDBDIR)
 
     elif args.dbmode == "mongo":
