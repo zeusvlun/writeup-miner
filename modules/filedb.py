@@ -1,6 +1,6 @@
 from .Logger import logger
 from .Notify import notify
-import os
+import os, hashlib
 
 ## Check if Database Exists
 
@@ -48,10 +48,14 @@ def checkDatabase(newFeeds, filename, webhook, token, chatid, filtered_words):
     counter = 0
     logger("Searching for new Feeds ...", "INF")
     for feed in newFeeds:
-        if feed["url"].strip() not in oldFeeds:
+
+        hashed = str(hashlib.md5(( feed["title"] + feed["published"]).encode()).hexdigest())
+
+        if hashed.strip() not in oldFeeds:
             counter += 1
             logger("New feed found {}".format(feed["title"].strip()), "OK")
             notify(feed, filtered_words, webhook, token, chatid)
-            feedsToUpdate.append(feed["url"].strip())
+            feedsToUpdate.append(hashed.strip())
+
     pushDatabase(feedsToUpdate, filename)
     logger("Job done! Total New feeds found : {}".format(counter), "OK")
