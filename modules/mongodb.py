@@ -1,4 +1,4 @@
-import pymongo
+import pymongo, hashlib
 from .Logger import logger
 from .Notify import notify
 
@@ -24,7 +24,8 @@ def updateDatabase(mydb, new_feeds, exist):
         else:
             logger("Creating new collection.", "INF")
         for feed in new_feeds:
-            mycol.insert_one({"url":feed['url']})
+            hashed = str(hashlib.md5(( feed["title"] + feed["published"]).encode()).hexdigest())
+            mycol.insert_one({"writeup": hashed})
         logger("Database Updated.", "OK")
     except Exception as e:
         logger("{}".format(e), "ERR")
@@ -34,7 +35,8 @@ def push_to_database(mydb, new_feed):
     try:
         logger("Pushing new posts to database.", "INF")
         mycol = mydb["writeups"]
-        mycol.insert_one({"url":new_feed['url']})
+        hashed = str(hashlib.md5(( new_feed["title"] + new_feed["published"]).encode()).hexdigest())
+        mycol.insert_one({"writeup": hashed})
         logger("Pushed new posts to database.", "OK")
     except Exception as e:
         logger("{}".format(e), "error")
@@ -46,12 +48,12 @@ def check_database(mydb, new_feeds, webhook, token, chatid, filtered_words):
         logger("Checking for new posts.", "INF")
         mycol = mydb["writeups"]
         old_feeds = mycol.find({})
-        urls = []
+        writeups = []
         for old_feed in old_feeds:
-            urls.append(old_feed['url'])
+            writeups.append(old_feed['writeup'])
 
         for new_feed in new_feeds:
-            if new_feed["url"] not in urls:
+            if new_feed["writeup"] not in writeups:
                 logger("New Feed Found : "+new_feed["title"], "OK")
                 push_to_database(mydb, new_feed)
                 notify(new_feed, filtered_words, webhook, token, chatid)
