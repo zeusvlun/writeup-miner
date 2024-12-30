@@ -1,10 +1,10 @@
 # Writeup-Miner
 
-**Writeup-Miner** is a flexible tool designed to scrape new Medium RSS feeds, store them in either a MongoDB database or a text file, and send real-time notifications via Telegram or Discord. Whether you're a security researcher or a technology enthusiast, this tool will help you stay updated with the latest content from Medium.
+**Writeup-Miner** is a flexible tool designed to scrape new RSS feeds, store them in either a MongoDB database or a text file, and send real-time notifications via Telegram or Discord. Whether you're a security researcher or a technology enthusiast, this tool will help you stay updated with the latest content from Medium.
 
 ## Features
 
-- Scrape new Medium posts via RSS.
+- Scrape new posts via RSS.
 - Store data in MongoDB or a `.txt` file.
 - Filter posts based on keywords.
 - Real-time notifications via Telegram or Discord.
